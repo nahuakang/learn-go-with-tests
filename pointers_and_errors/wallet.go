@@ -1,16 +1,43 @@
-package main
+package bitcoin
+
+import (
+	"errors"
+	"fmt"
+)
+
+// Bitcoin is an int type
+type Bitcoin int
+
+// Stringer interface
+type Stringer interface {
+	String() string
+}
 
 // Wallet holds info of a wallet
 type Wallet struct {
-	balance int
+	balance Bitcoin
 }
 
-// Deposit accepts an int and deposits the amount
-func (w *Wallet) Deposit(amount int) {
+// Deposit accepts an Bitcoin type and deposits the amount
+func (w *Wallet) Deposit(amount Bitcoin) {
 	w.balance += amount
 }
 
 // Balance displays the amount in a wallet
-func (w *Wallet) Balance() int {
+func (w *Wallet) Balance() Bitcoin {
 	return w.balance
+}
+
+// Withdraw Bitcoin amount
+func (w *Wallet) Withdraw(amount Bitcoin) error {
+	if amount > w.balance {
+		return errors.New("oh no")
+	}
+	w.balance -= amount
+	return nil
+}
+
+// String returns the amount of Bitcoin
+func (b Bitcoin) String() string {
+	return fmt.Sprintf("%d BTC", b)
 }
