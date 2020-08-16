@@ -1,16 +1,28 @@
 package racer
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 )
 
-// Racer returns the faster URL
-func Racer(a, b string) (winner string) {
+var tenSecondTimeout = 10 * time.Second
+
+// Racer compares the response times of a and b and returns the faster one
+func Racer(a, b string) (winner string, error error) {
+	return ConfigurableRacer(a, b, tenSecondTimeout)
+}
+
+// ConfigurableRacer returns the faster URL
+func ConfigurableRacer(a, b string, timeout time.Duration) (winner string, error error) {
 	select {
 	case <-ping(a):
-		return a
+		return a, nil
 	case <-ping(b):
-		return b
+		return b, nil
+	case <-time.After(timeout): // time.After returns a <-chan Time
+		// fmt.Errorf returns an error
+		return "", fmt.Errorf("timed out waiting for %s and %s", a, b)
 	}
 }
 
